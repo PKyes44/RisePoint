@@ -1,0 +1,139 @@
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
+import 'package:survey_jys/authentication/login_screen.dart';
+import 'package:survey_jys/authentication/sign_up_screen.dart';
+import 'package:survey_jys/constants/gaps.dart';
+import 'package:survey_jys/constants/sizes.dart';
+import 'package:survey_jys/widgets/form_button.dart';
+
+class NameScreen extends StatefulWidget {
+  Map<String, dynamic> userData;
+  NameScreen({super.key, required this.userData});
+
+  @override
+  State<NameScreen> createState() => _NameScreenState();
+}
+
+class _NameScreenState extends State<NameScreen> {
+  final TextEditingController _nameController = TextEditingController();
+  String _name = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController.addListener(() {
+      setState(() {
+        _name = _nameController.text;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  void onScaffoldTap() {
+    FocusScope.of(context).unfocus();
+  }
+
+  void onSubmit() async {
+    var data = {
+      'name': _name,
+      'password': widget.userData['password'],
+      'point': 1000,
+    };
+    print("data: $data");
+    FirebaseDatabase ref = FirebaseDatabase.instance;
+    await ref.ref().child('user/${widget.userData['studentNumber']}').set(data);
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const LoginScreen(),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onScaffoldTap,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: const Text(
+            "Sign Up",
+            style: TextStyle(
+              fontFamily: 'ONEMobilePOP',
+            ),
+          ),
+          centerTitle: true,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: Sizes.size36,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Gaps.v40,
+              const Text(
+                "당신의 이름을 알려주세요",
+                style: TextStyle(
+                  fontSize: Sizes.size20,
+                  fontFamily: 'KBODia',
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Gaps.v8,
+              const Text(
+                "계정 생성 후 바꿀 수 없습니다",
+                style: TextStyle(
+                  fontSize: Sizes.size16,
+                  color: Colors.black54,
+                  fontFamily: 'KBODia',
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              Gaps.v16,
+              TextFormField(
+                onSaved: (newValue) {
+                  _name = newValue.toString();
+                },
+                controller: _nameController,
+                cursorColor: Theme.of(context).primaryColor,
+                decoration: InputDecoration(
+                  hintText: "이름을 입력해주세요",
+                  hintStyle: const TextStyle(
+                    fontFamily: 'KBODia',
+                    fontWeight: FontWeight.w200,
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey.shade400,
+                    ),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey.shade400,
+                    ),
+                  ),
+                ),
+              ),
+              Gaps.v16,
+              GestureDetector(
+                onTap: () => onSubmit(),
+                child: FormButton(
+                  widthSize: MediaQuery.of(context).size.width,
+                  disabled: _name.isEmpty,
+                  text: "회원가입하기",
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
