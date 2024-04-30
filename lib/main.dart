@@ -32,8 +32,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    FlutterLocalNotification.init();
-    FlutterLocalNotification.requestNotificationPermission();
+    // FlutterLocalNotification.init();
+    // FlutterLocalNotification.requestNotificationPermission();
     // getPermissions();
     super.initState();
     _autoLoginCheck();
@@ -41,11 +41,11 @@ class _MyAppState extends State<MyApp> {
     DatabaseReference starCountRef =
         FirebaseDatabase.instance.ref('isGameOver/');
     starCountRef.onValue.listen((DatabaseEvent event) {
-      FlutterLocalNotification.sendLocalNotification(
-        idx: 0,
-        title: 'RissPoint',
-        content: '게임이 종료되었습니다 !',
-      );
+      // FlutterLocalNotification.sendLocalNotification(
+      //   idx: 0,
+      //   title: 'RissPoint',
+      //   content: '게임이 종료되었습니다 !',
+      // );
       print("Show Push Notification");
     });
   }
